@@ -79,12 +79,20 @@ export async function middleware(request: NextRequest) {
   const isOnboarding = searchParams.get("onboarding") === "true"
   const onboardingCookie = request.cookies.get("_medusa_onboarding")
 
+  const hostname = request.headers.get("host");
+    const subdomain = hostname.split('.')[0]; // Adjust this based on your domain structure
+
+    console.log("Subdomain : ",subdomain);
+
   const regionMap = await listCountries()
 
   const countryCode = regionMap && (await getCountryCode(request, regionMap))
 
   const urlHasCountryCode =
     countryCode && request.nextUrl.pathname.split("/")[1].includes(countryCode)
+
+
+    
 
   // check if one of the country codes is in the url
   if (urlHasCountryCode && (!isOnboarding || onboardingCookie)) {
