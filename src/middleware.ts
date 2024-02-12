@@ -79,10 +79,15 @@ export async function middleware(request: NextRequest) {
   const isOnboarding = searchParams.get("onboarding") === "true"
   const onboardingCookie = request.cookies.get("_medusa_onboarding")
 
-  const hostname = request.headers.get("host");
-    const subdomain = hostname.split('.')[0]; // Adjust this based on your domain structure
+  const host = request.headers.get("host") || '';
 
-    console.log("Subdomain : ",subdomain);
+  // Assuming a domain structure like "subdomain.example.com"
+  // This safely extracts the "subdomain" part, defaulting to an empty string if host is undefined or null
+  let subdomain = host ? host.split('.')[0] : '';
+
+  // Log the subdomain to the console
+  console.log("Subdomain:", subdomain);
+
 
   const regionMap = await listCountries()
 
@@ -90,9 +95,6 @@ export async function middleware(request: NextRequest) {
 
   const urlHasCountryCode =
     countryCode && request.nextUrl.pathname.split("/")[1].includes(countryCode)
-
-
-    
 
   // check if one of the country codes is in the url
   if (urlHasCountryCode && (!isOnboarding || onboardingCookie)) {
